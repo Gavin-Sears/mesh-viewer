@@ -1,6 +1,6 @@
 //--------------------------------------------------
-// Author:
-// Date:
+// Author: Gavin Sears
+// Date: Thursday, March 2
 // Description: Loads PLY files in ASCII format
 //--------------------------------------------------
 
@@ -45,11 +45,13 @@ namespace agl {
       // face indices in this model
       const std::vector<GLuint>& indices() const;
 
+      glm::vec3 _minBounds;
+      glm::vec3 _maxBounds;
+
    protected:
       void init();
 
    protected:
-
       std::vector<GLfloat> _positions;
       std::vector<GLfloat> _normals;
       std::vector<GLuint> _faces;

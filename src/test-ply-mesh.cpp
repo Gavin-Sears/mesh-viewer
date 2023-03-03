@@ -18,7 +18,7 @@ int main() {
    std::cout << "Min bounds: " << mesh.minBounds() << std::endl; 
 
    std::cout << std::endl << "Positions: " << std::endl;
-   for (int i = 0; i < mesh.numVertices()*3; i+=3) {
+   for (int i = 0; i < mesh.numVertices(); i+=3) {
       float x = mesh.positions()[i+0];
       float y = mesh.positions()[i+1];
       float z = mesh.positions()[i+2];
@@ -26,7 +26,7 @@ int main() {
    }
 
    std::cout << std::endl << "Normals: " << std::endl;
-   for (int i = 0; i < mesh.numVertices()*3; i+=3) {
+   for (int i = 0; i < mesh.numVertices(); i+=3) {
       float x = mesh.normals()[i+0];
       float y = mesh.normals()[i+1];
       float z = mesh.normals()[i+2];
@@ -34,7 +34,7 @@ int main() {
    }
 
    std::cout << std::endl << "Indices: " << std::endl;
-   for (int i = 0; i < mesh.numTriangles()*3; i+=3) {
+   for (int i = 0; i < mesh.numTriangles(); i+=3) {
       int i1 = mesh.indices()[i+0];
       int i2 = mesh.indices()[i+1];
       int i3 = mesh.indices()[i+2];

@@ -1,10 +1,12 @@
 //--------------------------------------------------
-// Author:
-// Date:
+// Author: Gavin Sears
+// Date: Thursday, March 2
 // Description: Loads PLY files in ASCII format
 //--------------------------------------------------
 
 #include "plymesh.h"
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 using namespace glm;
@@ -16,6 +18,11 @@ namespace agl {
    }
 
    PLYMesh::PLYMesh() {
+      _minBounds = vec3(NULL, NULL, NULL);
+      _maxBounds = vec3(NULL, NULL, NULL);
+      _positions.clear();
+      _normals.clear();
+      _faces.clear();
    }
 
    void PLYMesh::init() {
@@ -24,6 +31,9 @@ namespace agl {
    }
 
    PLYMesh::~PLYMesh() {
+      _positions.clear();
+      _normals.clear();
+      _faces.clear();
    }
 
    bool PLYMesh::load(const std::string& filename) {
@@ -31,16 +41,179 @@ namespace agl {
          std::cout << "WARNING: Cannot load different files with the same PLY mesh\n";
          return false;
       }
-      // todo: your code here
+      _positions.clear();
+      _normals.clear();
+      _faces.clear();
+      _minBounds = vec3(NULL, NULL, NULL);
+      _maxBounds = vec3(NULL, NULL, NULL);
+
+      // Placeholders for reader
+      int numPos;
+      int numFaces;
+      string myText;
+      int lineNum = 0;
+      bool startRead = false;
+      int temp;
+      float tempf;
+      vec3 normFind1;
+      vec3 normFind2;
+      vec3 normFind3;
+      vec3 oneTwo;
+      vec3 oneThree;
+      vec3 norm;
+      
+      // Set to NULL because that's how they should begin
+      _minBounds = vec3(NULL, NULL, NULL);
+      _maxBounds = vec3(NULL, NULL, NULL);
+
+      ifstream PLYFile(filename);
+      while (getline (PLYFile, myText))
+      {
+         if (!startRead)
+         {
+            // When element vertex count is found
+            if (myText.find("element vertex") != -1)
+            {
+               numPos = stoi(myText.substr(15, (myText.length() - 1)));
+            }
+            // When element face count is found
+            if (myText.find("element face") != -1)
+            {
+               numFaces = stoi(myText.substr(13, (myText.length() - 1)));
+            }
+
+         }
+         else
+         {
+            // Only if vertices have not been iterated through
+            if (numPos > 0)
+            {
+               // Point 1 and bounds updates
+               tempf = stof(myText.substr(0, myText.find(" ") + 1));
+               _positions.push_back(tempf);
+
+               if (!_minBounds.x || tempf < _minBounds.x)
+               {
+                  _minBounds = vec3(tempf, _minBounds.y, _minBounds.z);
+               }
+               if (!_maxBounds.x || tempf > _maxBounds.x)
+               {
+                  _maxBounds = vec3(tempf, _maxBounds.y, _maxBounds.z);
+               }
+               myText.erase(0, myText.find(" ") + 1);
+
+               // Point 2 and bounds updates
+               tempf = stof(myText.substr(0, myText.find(" ") + 1));
+               _positions.push_back(tempf);
+
+               if (!_minBounds.y || tempf < _minBounds.y)
+               {
+                  _minBounds = vec3(_minBounds.x, tempf, _minBounds.z);
+               }
+               if (!_maxBounds.y || tempf > _maxBounds.y)
+               {
+                  _maxBounds = vec3(_maxBounds.x, tempf, _maxBounds.z);
+               }
+               myText.erase(0, myText.find(" ") + 1);
+
+               // Point 3 and bounds updates
+               tempf = stof(myText.substr(0, myText.find(" ") + 1));
+               _positions.push_back(tempf);
+
+               if (!_minBounds.z || tempf < _minBounds.z)
+               {
+                  _minBounds = vec3(_minBounds.x, _minBounds.y, tempf);
+               }
+               if (!_maxBounds.z || tempf > _maxBounds.z)
+               {
+                  _maxBounds = vec3(_maxBounds.x, _maxBounds.y, tempf);
+               }
+               myText.erase(0, myText.find(" ") + 1);
+               numPos--;
+            }
+            // Only if faces have not been iterated through
+            else if (numFaces > 0)
+            {
+               myText.erase(0, myText.find(" ") + 1);
+
+               // Finding first vector index
+               temp = stoi(myText.substr(0, myText.find(" ") + 1));
+               _faces.push_back(temp);
+               normFind1 = vec3(_positions[temp * 3], _positions[temp * 3 + 1], _positions[temp * 3 + 2]);
+               myText.erase(0, myText.find(" ") + 1);
+
+               // Finding second vector index
+               temp = stoi(myText.substr(0, myText.find(" ") + 1));
+               _faces.push_back(temp);
+               normFind2 = vec3(_positions[temp * 3], _positions[temp * 3 + 1], _positions[temp * 3 + 2]);
+               myText.erase(0, myText.find(" ") + 1);
+
+               // Finding third vector index
+               temp = stoi(myText.substr(0, myText.find(" ")));
+               _faces.push_back(temp);
+               normFind3 = vec3(_positions[temp * 3], _positions[temp * 3 + 1], _positions[temp * 3 + 2]);
+               myText.erase(0, myText.find(" "));
+
+               // Finding segment 1
+               oneTwo = vec3(
+                  normFind1.x - normFind2.x, 
+                  normFind1.y - normFind2.y, 
+                  normFind1.z - normFind2.z
+               );
+
+               // Finding segment 2
+               oneThree = vec3(
+                  normFind1.x - normFind3.x, 
+                  normFind1.y - normFind3.y, 
+                  normFind1.z - normFind3.z
+               );
+
+               // Finding normal vector between the two
+               norm = vec3(
+                  (oneTwo.y * oneThree.z - oneTwo.z * oneThree.y), 
+                  (oneTwo.z * oneThree.x - oneTwo.x * oneThree.z), 
+                  (oneTwo.x * oneThree.y - oneTwo.y * oneThree.x)
+               );
+
+               // This is the magnitude of the normal vector
+               temp = sqrt(pow(norm.x, 2) + pow(norm.y, 2) + pow(norm.z, 2));
+
+               // Pushing back normal values for triangle
+               _normals.push_back((oneTwo.y * oneThree.z - oneTwo.z * oneThree.y) / temp);
+               _normals.push_back((oneTwo.z * oneThree.x - oneTwo.x * oneThree.z) / temp);
+               _normals.push_back((oneTwo.x * oneThree.y - oneTwo.y * oneThree.x) / temp);
+
+               _normals.push_back((oneTwo.y * oneThree.z - oneTwo.z * oneThree.y) / temp);
+               _normals.push_back((oneTwo.z * oneThree.x - oneTwo.x * oneThree.z) / temp);
+               _normals.push_back((oneTwo.x * oneThree.y - oneTwo.y * oneThree.x) / temp);
+
+               _normals.push_back((oneTwo.y * oneThree.z - oneTwo.z * oneThree.y) / temp);
+               _normals.push_back((oneTwo.z * oneThree.x - oneTwo.x * oneThree.z) / temp);
+               _normals.push_back((oneTwo.x * oneThree.y - oneTwo.y * oneThree.x) / temp);
+
+               numFaces--;
+            }
+         }
+
+         // Checker for when the header is over
+         if (myText == "end_header")
+         {
+            startRead = true;
+         }
+         lineNum++;
+      }
+
+      PLYFile.close();
       return false;
    }
 
    glm::vec3 PLYMesh::minBounds() const {
-      return glm::vec3(0);
+
+      return _minBounds;
    }
 
    glm::vec3 PLYMesh::maxBounds() const {
-      return glm::vec3(0);
+      return _maxBounds;
    }
 
    int PLYMesh::numVertices() const {
