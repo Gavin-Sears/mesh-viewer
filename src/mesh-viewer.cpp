@@ -30,6 +30,14 @@ public:
          tempMesh.load("../models/" + i);
          _meshes.push_back(tempMesh);
       }
+      renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
+      renderer.loadShader("phong-pixel", "../shaders/phong-pixel.vs", "../shaders/phong-pixel.fs");
+      renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
+      
+      _shaders.push_back("normals");
+      _shaders.push_back("phong-pixel");
+      _shaders.push_back("phong-vertex");
+
       mesh.load("../models/"+ fileNames[0]);
    }
 
@@ -75,7 +83,9 @@ public:
       if (key == 'n' || key == 'N')
       {
          if (curMesh < _meshes.size() - 1 )
-         curMesh++;
+         {
+            curMesh++;
+         }
       }
       // Last Mesh
       else if (key == 'p' || key == 'P')
@@ -85,9 +95,23 @@ public:
             curMesh--;
          }
       }
+      else if (key == 's' || key == 'S')
+      {
+         if (curShad < _shaders.size() - 1)
+         {
+            curShad++;
+         }
+         else
+         {
+            curShad = 0;
+         }
+         
+      }
    }
 
    void draw() {
+      renderer.beginShader(_shaders[curShad]);
+
       float aspect = ((float)width()) / height();
       renderer.perspective(glm::radians(60.0f), aspect, 0.1f, 50.0f);
       renderer.lookAt(eyePos, lookPos, up);
@@ -99,7 +123,7 @@ public:
       viewMesh = _meshes[curMesh];
       
       // Scaling. Corrects based on dimensions
-      float rangex = viewMesh._maxBounds.x - viewMesh._minBounds.x;
+      /*float rangex = viewMesh._maxBounds.x - viewMesh._minBounds.x;
       float rangey = viewMesh._maxBounds.y - viewMesh._minBounds.y;
       float rangez = viewMesh._maxBounds.z - viewMesh._minBounds.z;
 
@@ -141,10 +165,11 @@ public:
             (-0.5f * (viewMesh._maxBounds.y + viewMesh._minBounds.y)),
             (-0.5f * (viewMesh._maxBounds.z + viewMesh._minBounds.z))
          )
-      );
+      );*/
 
-      renderer.mesh(viewMesh);
-      //renderer.teapot(); // for debugging!
+      //renderer.mesh(viewMesh);
+      renderer.cube(); // for debugging!
+      renderer.endShader();
    }
 
 protected:
@@ -152,6 +177,7 @@ protected:
    PLYMesh viewMesh;
    std::vector<PLYMesh> _meshes;
    std::vector<string> fileNames;
+   std::vector<string> _shaders;
    vec3 eyePos = vec3(10, 0, 0);
    vec3 lookPos = vec3(0, 0, 0);
    vec3 up = vec3(0, 1, 0);
@@ -160,6 +186,7 @@ protected:
    float Azimuth = 0.0f;
    float Radius = 10.0f;
    int curMesh = 0;
+   int curShad = 0;
 };
 
 int main(int argc, char** argv)
