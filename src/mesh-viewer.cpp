@@ -168,7 +168,7 @@ public:
       );*/
 
       //renderer.mesh(viewMesh);
-      renderer.cube(); // for debugging!
+      renderer.teapot(); // for debugging!
       renderer.endShader();
    }
 

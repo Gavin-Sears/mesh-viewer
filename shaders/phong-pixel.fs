@@ -16,7 +16,8 @@ const vec4 lightColor = vec4(1.0, 1.0, 1.0, 1.0);
 const float irradiPerp = 1.0;
 
 vec3 phongBRDF(vec3 lightDir, 
-vec3 viewDir, vec3 normal, 
+vec3 viewDir, 
+vec3 normal, 
 vec3 phongDiffuseCol, 
 vec3 phongSpecularCol, 
 float phongShininess) 
