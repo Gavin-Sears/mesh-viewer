@@ -2,7 +2,7 @@
 
 Implements a simple PLY viewer
 
-TODO: Add a representative image for your project here
+<img title="" src="README_images/toon_cow.png" alt="">
 
 ## How to build
 
@@ -44,8 +44,44 @@ mesh-viewer/build $ ../bin/mesh-viewer
 
 ## Demo of basic features
 
-TODO: Document the core features of your viewer (shaders + models)
+# Camera movement
 
-## Unique features 
+<video src='/README_images/Cam.mp4' />
 
-TODO: Show the unique features you made
+# Read Models from Directory
+
+<video width="window.innerWidth" controls>
+    <source src="/README_images/Models.mp4" type="video/mp4">
+</video>
+
+# Normal Shader
+
+<video width="window.innerWidth" controls>
+    <source src="/README_images/Normal_Shader.mp4" type="video/mp4">
+</video>
+
+# Gouraud Shader
+
+<video width="window.innerWidth" controls>
+    <source src="/README_images/Gouraud_Shader.mp4" type="video/mp4">
+</video>
+
+# Phong Shader
+
+<video width="window.innerWidth" controls>
+    <source src="/README_images/Phong_Shader.mp4" type="video/mp4">
+</video>
+
+## Unique features
+
+# Wobbly Shader
+
+<video width="window.innerWidth" controls>
+    <source src="/README_images/Wobbly_Shader.mp4" type="video/mp4">
+</video>
+
+# Toon Shader
+
+<video width="window.innerWidth" controls>
+    <source src="/README_images/Toon_Shader.mp4" type="video/mp4">
+</video>
