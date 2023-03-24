@@ -10,11 +10,8 @@ uniform mat4 MVP;
 uniform bool HasUV;
 
 out vec3 fn;
-out vec3 vertPos;
 void main()
 {
-   fn = NormalMatrix * vNormal;
-   vec4 vertPos4 = ModelViewMatrix * vec4(vPos, 1.0);
-   vertPos = vec3(vertPos4) / vertPos4.w;
+   fn = vNormal;
    gl_Position = MVP * vec4(vPos, 1.0);
 }

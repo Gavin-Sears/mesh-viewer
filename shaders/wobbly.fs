@@ -1,11 +1,13 @@
 #version 400
 
 out vec4 FragColor;
-
+// elapsedTime();
+//
 in vec3 fn;
 in vec3 vertPos;
 
 uniform int mode;
+uniform float time;
 uniform vec3 lightDirection = vec3(-1.0, -0.25, 0.0);
 
 const vec4 ambientColor = vec4(0.01, 0.0, 0.0, 1.0);

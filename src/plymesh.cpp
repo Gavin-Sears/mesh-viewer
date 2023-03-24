@@ -129,13 +129,29 @@ namespace agl {
                   _maxBounds = vec3(_maxBounds.x, _maxBounds.y, tempf);
                }
                myText.erase(0, myText.find(" ") + 1);
+
+               // Normal 1
+               tempf = stof(myText.substr(0, myText.find(" ") + 1));
+               _normals.push_back(tempf);
+               myText.erase(0, myText.find(" ") + 1);
+
+               // Normal 2
+               tempf = stof(myText.substr(0, myText.find(" ") + 1));
+               _normals.push_back(tempf);
+               myText.erase(0, myText.find(" ") + 1);
+
+               // Normal 3
+               tempf = stof(myText.substr(0, myText.find(" ")));
+               _normals.push_back(tempf);
+               myText.erase(0, myText.find(" ") + 1);
+
                numPos--;
             }
             // Only if faces have not been iterated through
             else if (numFaces > 0)
             {
                myText.erase(0, myText.find(" ") + 1);
-
+               
                // Finding first vector index
                temp = stoi(myText.substr(0, myText.find(" ") + 1));
                _faces.push_back(temp);
@@ -153,43 +169,6 @@ namespace agl {
                _faces.push_back(temp);
                normFind3 = vec3(_positions[temp * 3], _positions[temp * 3 + 1], _positions[temp * 3 + 2]);
                myText.erase(0, myText.find(" "));
-
-               // Finding segment 1
-               oneTwo = vec3(
-                  normFind1.x - normFind2.x, 
-                  normFind1.y - normFind2.y, 
-                  normFind1.z - normFind2.z
-               );
-
-               // Finding segment 2
-               oneThree = vec3(
-                  normFind1.x - normFind3.x, 
-                  normFind1.y - normFind3.y, 
-                  normFind1.z - normFind3.z
-               );
-
-               // Finding normal vector between the two
-               norm = vec3(
-                  (oneTwo.y * oneThree.z - oneTwo.z * oneThree.y), 
-                  (oneTwo.z * oneThree.x - oneTwo.x * oneThree.z), 
-                  (oneTwo.x * oneThree.y - oneTwo.y * oneThree.x)
-               );
-
-               // This is the magnitude of the normal vector
-               temp = sqrt(pow(norm.x, 2) + pow(norm.y, 2) + pow(norm.z, 2));
-
-               // Pushing back normal values for triangle
-               _normals.push_back((oneTwo.y * oneThree.z - oneTwo.z * oneThree.y) / temp);
-               _normals.push_back((oneTwo.z * oneThree.x - oneTwo.x * oneThree.z) / temp);
-               _normals.push_back((oneTwo.x * oneThree.y - oneTwo.y * oneThree.x) / temp);
-
-               _normals.push_back((oneTwo.y * oneThree.z - oneTwo.z * oneThree.y) / temp);
-               _normals.push_back((oneTwo.z * oneThree.x - oneTwo.x * oneThree.z) / temp);
-               _normals.push_back((oneTwo.x * oneThree.y - oneTwo.y * oneThree.x) / temp);
-
-               _normals.push_back((oneTwo.y * oneThree.z - oneTwo.z * oneThree.y) / temp);
-               _normals.push_back((oneTwo.z * oneThree.x - oneTwo.x * oneThree.z) / temp);
-               _normals.push_back((oneTwo.x * oneThree.y - oneTwo.y * oneThree.x) / temp);
 
                numFaces--;
             }

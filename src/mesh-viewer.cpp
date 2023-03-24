@@ -33,10 +33,14 @@ public:
       renderer.loadShader("normals", "../shaders/normals.vs", "../shaders/normals.fs");
       renderer.loadShader("phong-pixel", "../shaders/phong-pixel.vs", "../shaders/phong-pixel.fs");
       renderer.loadShader("phong-vertex", "../shaders/phong-vertex.vs", "../shaders/phong-vertex.fs");
+      renderer.loadShader("wobbly", "../shaders/wobbly.vs", "../shaders/wobbly.fs");
+      renderer.loadShader("toon", "../shaders/toon.vs", "../shaders/toon.fs");
       
       _shaders.push_back("normals");
       _shaders.push_back("phong-pixel");
       _shaders.push_back("phong-vertex");
+      _shaders.push_back("wobbly");
+      _shaders.push_back("toon");
 
       mesh.load("../models/"+ fileNames[0]);
    }
@@ -95,6 +99,7 @@ public:
             curMesh--;
          }
       }
+      // Loops through shaders
       else if (key == 's' || key == 'S')
       {
          if (curShad < _shaders.size() - 1)
@@ -112,6 +117,9 @@ public:
    void draw() {
       renderer.beginShader(_shaders[curShad]);
 
+      // renderer.setUniform() to set values in shader
+      renderer.setUniform("time", elapsedTime());
+
       float aspect = ((float)width()) / height();
       renderer.perspective(glm::radians(60.0f), aspect, 0.1f, 50.0f);
       renderer.lookAt(eyePos, lookPos, up);
@@ -123,40 +131,21 @@ public:
       viewMesh = _meshes[curMesh];
       
       // Scaling. Corrects based on dimensions
-      /*float rangex = viewMesh._maxBounds.x - viewMesh._minBounds.x;
+      float rangex = viewMesh._maxBounds.x - viewMesh._minBounds.x;
       float rangey = viewMesh._maxBounds.y - viewMesh._minBounds.y;
       float rangez = viewMesh._maxBounds.z - viewMesh._minBounds.z;
+      float maxRange = std::max(rangex, rangey);
+      maxRange = std::max(maxRange, rangez);
 
-      if ((rangex >= rangey) || (rangex >= rangez))
-      {
-         renderer.scale(
-            vec3(
-               (6.0f / (rangex)), 
-               (6.0f / (rangex)), 
-               (6.0f / (rangex))
-            )
-         );
-      }
-      else if (rangey >= rangez)
-      {
-         renderer.scale(
-            vec3(
-               (6.0f / (rangey)),
-               (6.0f / (rangey)),
-               (6.0f / (rangey))
-            )
-         );
-      }
-      else
-      {
-         renderer.scale(
-            vec3(
-               (6.0f / (rangez)),
-               (6.0f / (rangez)),
-               (6.0f / (rangez))
-            )
-         );
-      }
+      renderer.setUniform("maxRange", maxRange);
+
+      renderer.scale(
+         vec3(
+            ((8.0f / maxRange)), 
+            ((8.0f / maxRange)), 
+            ((8.0f / maxRange))
+         )
+      );
 
       // Translations
       renderer.translate(
@@ -165,10 +154,10 @@ public:
             (-0.5f * (viewMesh._maxBounds.y + viewMesh._minBounds.y)),
             (-0.5f * (viewMesh._maxBounds.z + viewMesh._minBounds.z))
          )
-      );*/
+      );
 
-      //renderer.mesh(viewMesh);
-      renderer.teapot(); // for debugging!
+      renderer.mesh(viewMesh);
+      //renderer.teapot(); // for debugging!
       renderer.endShader();
    }
 
