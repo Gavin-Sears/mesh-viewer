@@ -46,7 +46,11 @@ mesh-viewer/build $ ../bin/mesh-viewer
 
 # Camera movement
 
-<video src='/README_images/Cam.mp4' />
+
+
+[mesh-viewer/Cam.mp4 at main · Gavin-Sears/mesh-viewer · GitHub](https://github.com/Gavin-Sears/mesh-viewer/blob/main/README_images/Cam.mp4)
+
+
 
 # Read Models from Directory
 
